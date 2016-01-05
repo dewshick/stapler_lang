@@ -55,3 +55,9 @@ evalBinOp op = case op of
 
 evalString :: String -> Integer
 evalString str = evalExpr $ parseString str
+
+repl = do
+  l <- getLine
+  if null l
+  then return ()
+  else (putStrLn $ show $ evalString l) >> repl
