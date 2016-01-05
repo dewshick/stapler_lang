@@ -41,3 +41,17 @@ parseString str =
   case parse staplerParser "" str of
     Left e  -> error $ show e
     Right r -> r
+
+evalExpr :: AExpr -> Integer
+evalExpr (Seq exprs) = evalExpr $ last exprs
+evalExpr (IntConst i) = i
+evalExpr (ABinary op e1 e2) = (evalBinOp op) (evalExpr e1) (evalExpr e2)
+
+evalBinOp op = case op of
+  Add -> (+)
+  Subtract -> (-)
+  Multiply -> (*)
+  Divide -> div
+
+evalString :: String -> Integer
+evalString str = evalExpr $ parseString str
