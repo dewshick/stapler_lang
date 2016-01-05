@@ -13,3 +13,9 @@ data ABinOp = Add | Subtract | Multiply | Divide deriving (Show)
 
 languageDef = emptyDef { Token.reservedOpNames = ["+", "-", "*", "%"] }
 lexer = Token.makeTokenParser languageDef
+
+reservedOp = Token.reservedOp lexer
+parens     = Token.parens     lexer
+integer    = Token.integer    lexer
+semi       = Token.semi       lexer
+whiteSpace = Token.whiteSpace lexer
