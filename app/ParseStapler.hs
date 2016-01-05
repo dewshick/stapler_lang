@@ -34,3 +34,10 @@ aOperators = let binOpParser (op, datatype) = Infix (reservedOp op >> return (AB
              in [binOps]
 
 aTerm = parens aExpression <|> liftM IntConst integer
+
+
+parseString :: String -> AExpr
+parseString str =
+  case parse staplerParser "" str of
+    Left e  -> error $ show e
+    Right r -> r
