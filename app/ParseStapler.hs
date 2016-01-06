@@ -8,7 +8,7 @@ import Text.ParserCombinators.Parsec.Language
 import qualified Text.ParserCombinators.Parsec.Token as Token
 
 
-data AExpr = Seq [AExpr] | IntConst Integer | ABinary ABinOp AExpr AExpr deriving (Show)
+data AExpr = IntConst Integer | ABinary ABinOp AExpr AExpr deriving (Show)
 data ABinOp = Add | Subtract | Multiply | Divide deriving (Show)
 
 reservedBinOps   = ["+", "-", "*", "%"]
@@ -43,7 +43,6 @@ parseString str =
     Right r -> r
 
 evalExpr :: AExpr -> Integer
-evalExpr (Seq exprs) = evalExpr $ last exprs
 evalExpr (IntConst i) = i
 evalExpr (ABinary op e1 e2) = (evalBinOp op) (evalExpr e1) (evalExpr e2)
 
