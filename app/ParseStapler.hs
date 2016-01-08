@@ -8,7 +8,7 @@ import Text.ParserCombinators.Parsec.Language
 import qualified Text.ParserCombinators.Parsec.Token as Token
 
 
-data AExpr = IntConst Integer | ABinary ABinOp AExpr AExpr deriving (Show)
+data AExpr = IntConst Integer | ABinary ABinOp AExpr AExpr | Assign String AExpr deriving (Show)
 data ABinOp = Add | Subtract | Multiply | Divide deriving (Show)
 
 reservedBinOps   = ["+", "-", "*", "%"]
@@ -24,8 +24,8 @@ integer    = Token.integer    lexer
 semi       = Token.semi       lexer
 whiteSpace = Token.whiteSpace lexer
 
-staplerParser :: Parser AExpr
-staplerParser = whiteSpace >> aExpression
+staplerParser :: Parser [AExpr]
+staplerParser = whiteSpace >> sepBy1 aExpression semi
 
 aExpression = buildExpressionParser aOperators aTerm
 
@@ -36,11 +36,14 @@ aOperators = let binOpParser (op, datatype) = Infix (reservedOp op >> return (AB
 aTerm = parens aExpression <|> liftM IntConst integer
 
 
-parseString :: String -> AExpr
+parseString :: String -> [AExpr]
 parseString str =
   case parse staplerParser "" str of
     Left e  -> error $ show e
     Right r -> r
+
+evalExprs :: [AExpr] -> Integer
+evalExprs es = foldl (\n e -> evalExpr e) 0 es
 
 evalExpr :: AExpr -> Integer
 evalExpr (IntConst i) = i
@@ -53,7 +56,7 @@ evalBinOp op = case op of
   Divide -> div
 
 evalString :: String -> Integer
-evalString str = evalExpr $ parseString str
+evalString str = evalExprs $ parseString str
 
 repl = do
   l <- getLine
